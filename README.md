@@ -1,70 +1,153 @@
-# Getting Started with Create React App
+# Calendar App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A full-featured calendar application that allows users to create, view, edit, and delete events. Users can search for events, receive notifications for upcoming events, and upload attachments to their events. This project is built using Node.js, Express, MongoDB, and React with `react-big-calendar`.
 
-## Available Scripts
+## Table of Contents
 
-In the project directory, you can run:
+- [About the Project](#about-the-project)
+- [Features](#features)
+- [Technologies Used](#technologies-used)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Usage](#usage)
+- [API Documentation](#api-documentation)
+- [Screenshots](#screenshots)
+- [License](#license)
 
-### `npm start`
+## About the Project
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+The Calendar App aims to provide users with a simple and intuitive interface to manage their events efficiently. It incorporates features such as real-time notifications, event searching, and file uploads for event attachments. The application is designed to be user-friendly and responsive, making it suitable for both desktop and mobile devices.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Features
 
-### `npm test`
+- **Create, Update, and Delete Events**: Allows users to manage their events through a streamlined interface.
+- **Real-time Notifications**: Users receive notifications for upcoming events.
+- **Search Functionality**: Users can search events by title or description.
+- **Event Filtering**: The calendar displays only events from the current month, with special styling for today’s date.
+- **File Attachments**: Users can upload and view attachments related to their events.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Technologies Used
 
-### `npm run build`
+- **Frontend**: React, Tailwind CSS (optional), `react-big-calendar`, Moment.js
+- **Backend**: Node.js, Express
+- **Database**: MongoDB (using Mongoose for ORM)
+- **Notifications**: Browser Notifications API
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Installation
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Follow these steps to install and run the project locally.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Prerequisites
 
-### `npm run eject`
+Ensure you have the following installed:
+- Node.js
+- MongoDB
+- npm (Node Package Manager)
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Cloning the Repository
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```bash
+git clone https://github.com/your-username/calendar-app.git
+cd calendar-app
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Installing Dependencies
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+#### Server-side
 
-## Learn More
+Navigate to the `server` folder and install dependencies:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```bash
+cd server
+npm install
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+#### Client-side
 
-### Code Splitting
+Navigate to the `client` folder and install dependencies:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```bash
+cd ../client
+npm install
+```
 
-### Analyzing the Bundle Size
+## Configuration
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### Server Configuration
 
-### Making a Progressive Web App
+In the `server` folder, create a `.env` file to store your environment variables. Here is an example of the required variables:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+```env
+PORT=5000
+MONGO_URI=your_mongodb_connection_string
+```
 
-### Advanced Configuration
+### Starting the Server
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+```bash
+node index.js
+```
 
-### Deployment
+### Client Configuration
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+In the `client/src` folder, update the `api.js` file with the correct base URL for your API server.
 
-### `npm run build` fails to minify
+```javascript
+// api.js
+const API_BASE_URL = 'http://localhost:5000/api/events';
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### Starting the Client
+
+In the `client` folder, start the React development server:
+
+```bash
+npm start
+```
+
+### Accessing the Application
+
+The frontend should be available at [http://localhost:3000](http://localhost:3000) and the backend server at [http://localhost:5000](http://localhost:5000).
+
+## Usage
+
+- **To Create Events**: Click on a date in the calendar, fill out the event details, and submit.
+- **To Edit or Delete Events**: Click on an existing event to open it, make any necessary changes, or delete the event.
+- **Search Events**: Use the search bar to filter events based on keywords in the title or description.
+- **File Uploads**: Attach files to events when creating or editing them.
+- **Notifications**: Make sure your browser allows notifications from this application to receive reminders.
+
+## API Documentation
+
+### Endpoints
+
+1. **GET /api/events**: Retrieve all events.
+2. **POST /api/events**: Create a new event.
+3. **PUT /api/events/:id**: Update an existing event.
+4. **DELETE /api/events/:id**: Delete an event.
+
+## Screenshots
+
+1. **Main Calendar View**
+
+   ![Main Calendar View](./screenshots/calendar-view.png)
+
+2. **Event Creation Modal**
+
+   ![Event Creation Modal](./screenshots/create-event.png)
+
+3. **Event Search**
+
+   ![Event Search](./screenshots/event-search.png)
+
+4. **Notification Popup**
+
+   ![Notification Popup](./screenshots/notification-popup.png)
+
+## License
+
+This project is licensed under the MIT License.
+
+---
+
+Feel free to adapt this `README.md` based on any additional specifics of your project!
