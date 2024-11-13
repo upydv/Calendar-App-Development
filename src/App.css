@@ -1,7 +1,7 @@
 
 /* Hover effect on calendar day cells */
 .hovered {
-  background-color: #eaf4ff !important; /* Light blue on hover */
+  background-color: #8ebef1 !important; /* Light blue on hover */
   transition: background-color 0.2s ease-in-out;
 }
 body{
@@ -39,7 +39,7 @@ h1::after {
 input[type="text"] {
   padding: 0.75rem;
   font-size: 1rem;
-  border: 1px solid #ced4da;
+  border: 1px solid #08121c;
   border-radius: 4px;
   margin-bottom: 1rem;
   outline: none;
@@ -58,12 +58,12 @@ input[type="text"]:focus {
 }
 
 .rbc-today {
-  background-color: #ffeb3b !important;
+  background-color: #2aa6c8 !important;
   border: 1px solid #f57c00;
 }
 
 .rbc-selected {
-  background-color: #cfe2ff !important;
+  background-color: #4a87e3 !important;
   border: 1px solid #007bff;
 }
 
@@ -73,7 +73,7 @@ input[type="text"]:focus {
 
 /* Modal styling */
 .fixed {
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: #2aa6c8 !important;
 }
 
 form {
@@ -126,4 +126,20 @@ input,
 button,
 textarea {
   transition: all 0.3s ease;
+}
+.custom-event {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.media-icons {
+  display: flex;
+  gap: 4px;
+}
+
+.selected-date {
+  background-color: #ffcccb; /* Example highlight color */
+  border: 2px solid #ff0000; /* Optional border */
+  color: white; /* Text color for contrast */
 }

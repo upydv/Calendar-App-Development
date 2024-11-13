@@ -3,48 +3,17 @@ import { Calendar, momentLocalizer } from 'react-big-calendar'
 import moment from 'moment'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import { getEvents, createEvent, updateEvent, deleteEvent } from './api'
+import { requestNotificationPermission, scheduleNotification } from './notifications'
+import { FaImage, FaVideo } from 'react-icons/fa'
 import './App.css'
 
 const localizer = momentLocalizer(moment)
 
-// Notification functions
-const requestNotificationPermission = async () => {
-  if ('Notification' in window) {
-    try {
-      const permission = await Notification.requestPermission()
-      if (permission !== 'granted') {
-        console.log('Notification permission denied')
-      }
-    } catch (error) {
-      console.error('Error requesting notification permission:', error)
-    }
-  }
-}
-
-const scheduleNotification = (event) => {
-  if ('Notification' in window && Notification.permission === 'granted') {
-    const now = new Date().getTime()
-    const eventTime = new Date(event.start).getTime()
-    const timeUntilEvent = eventTime - now
-
-    if (timeUntilEvent > 0) {
-      setTimeout(() => {
-        const notification = new Notification(event.title, {
-          body: event.description || 'Your event is starting now!',
-        })
-
-        notification.onclick = () => {
-          console.log('Notification clicked:', event)
-        }
-
-        setTimeout(() => {
-          new Notification(`Reminder: ${event.title}`, {
-            body: 'This event started 5 minutes ago.',
-          })
-        }, 5 * 60 * 1000) // 5 minutes
-      }, timeUntilEvent)
-    }
-  }
+const isToday = (date) => {
+  const today = new Date()
+  return date.getDate() === today.getDate() &&
+    date.getMonth() === today.getMonth() &&
+    date.getFullYear() === today.getFullYear()
 }
 
 export default function App() {
@@ -55,11 +24,13 @@ export default function App() {
     start: null,
     end: null,
     description: '',
-    attachments: []
+    image: null,
+    video: null
   })
   const [searchTerm, setSearchTerm] = useState('')
-  const [selectedDate, setSelectedDate] = useState(null)
   const [isEditing, setIsEditing] = useState(false)
+  const [hoveredDate, setHoveredDate] = useState(null)
+  const [selectedDate, setSelectedDate] = useState(null)
 
   useEffect(() => {
     requestNotificationPermission()
@@ -77,7 +48,7 @@ export default function App() {
 
   const handleSelectSlot = ({ start, end }) => {
     if (start.getMonth() === new Date().getMonth()) {
-      setCurrentEvent({ title: '', start, end, description: '', attachments: [] })
+      setCurrentEvent({ title: '', start, end, description: '', image: null, video: null })
       setIsOpen(true)
       setSelectedDate(start)
       setIsEditing(false)
@@ -92,14 +63,25 @@ export default function App() {
 
   const handleCreateOrUpdateEvent = async (e) => {
     e.preventDefault()
+
     if (!currentEvent.title || !currentEvent.start || !currentEvent.end) {
       alert('Please fill in all required fields (title, start, and end time)')
       return
     }
-    if (currentEvent.end <= currentEvent.start) {
+
+    const startDate = new Date(currentEvent.start)
+    const endDate = new Date(currentEvent.end)
+
+    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+      alert("Start or end time is not a valid date.")
+      return
+    }
+
+    if (endDate <= startDate) {
       alert('End time must be after start time')
       return
     }
+
     try {
       let updatedEvent
       if (isEditing) {
@@ -107,9 +89,10 @@ export default function App() {
       } else {
         updatedEvent = await createEvent(currentEvent)
       }
+
       scheduleNotification(updatedEvent)
       setIsOpen(false)
-      setCurrentEvent({ title: '', start: null, end: null, description: '', attachments: [] })
+      setCurrentEvent({ title: '', start: null, end: null, description: '', image: null, video: null })
       fetchEvents()
     } catch (error) {
       console.error('Error creating/updating event:', error)
@@ -129,8 +112,18 @@ export default function App() {
   }
 
   const handleFileUpload = (e) => {
-    const files = Array.from(e.target.files)
-    setCurrentEvent({ ...currentEvent, attachments: files.map(file => file.name) })
+    const file = e.target.files[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onload = (event) => {
+        if (file.type.startsWith('image/')) {
+          setCurrentEvent({ ...currentEvent, image: event.target.result, video: null })
+        } else if (file.type.startsWith('video/')) {
+          setCurrentEvent({ ...currentEvent, video: event.target.result, image: null })
+        }
+      }
+      reader.readAsDataURL(file)
+    }
   }
 
   const filteredEvents = events.filter(event => {
@@ -140,13 +133,26 @@ export default function App() {
     )
   })
 
-  const isToday = (date) => {
-    const today = new Date()
-    return (
-      date.getDate() === today.getDate() &&
-      date.getMonth() === today.getMonth() &&
-      date.getFullYear() === today.getFullYear()
-    )
+  const CustomEvent = ({ event }) => (
+    <div className="custom-event">
+      <div>{event.title}</div>
+      <div className="media-icons">
+        {event.image && <FaImage className="icon" />}
+        {event.video && <FaVideo className="icon" />}
+      </div>
+    </div>
+  )
+
+  const dayPropGetter = (date) => {
+    let style = {}
+    if (date.getTime() === (selectedDate?.getTime() || null)) {
+      style = { backgroundColor: '#cfe2ff', border: '1px solid #007bff' }
+    } else if (isToday(date)) {
+      style = { backgroundColor: '#ffeb3b', border: '1px solid #f57c00' }
+    } else if (date.getMonth() !== new Date().getMonth()) {
+      style = { backgroundColor: '#f0f0f0' }
+    }
+    return { style }
   }
 
   return (
@@ -168,17 +174,12 @@ export default function App() {
         onSelectSlot={handleSelectSlot}
         onSelectEvent={handleSelectEvent}
         selectable
-        dayPropGetter={(date) => {
-          let style = {}
-          if (date.getTime() === (selectedDate?.getTime() || null)) {
-            style = { backgroundColor: '#cfe2ff', border: '1px solid #007bff' }
-          } else if (isToday(date)) {
-            style = { backgroundColor: '#ffeb3b', border: '1px solid #f57c00' }
-          } else if (date.getMonth() !== new Date().getMonth()) {
-            style = { backgroundColor: '#f0f0f0' }
-          }
-          return { style }
+        components={{
+          event: CustomEvent
         }}
+        dayPropGetter={dayPropGetter}
+        onDrillDown={(date) => setHoveredDate(date)}
+        onNavigate={() => setHoveredDate(null)}
       />
       {isOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
@@ -229,15 +230,25 @@ export default function App() {
                 />
               </div>
               <div>
-                <label htmlFor="attachments" className="block mb-1">Attachments</label>
+                <label htmlFor="media" className="block mb-1">Image or Video</label>
                 <input
-                  id="attachments"
+                  id="media"
                   type="file"
-                  multiple
+                  accept="image/*,video/*"
                   onChange={handleFileUpload}
                   className="w-full p-2 border rounded"
                 />
               </div>
+              {currentEvent.image && (
+                <div>
+                  <img src={currentEvent.image} alt="Event" className="max-w-full h-auto" />
+                </div>
+              )}
+              {currentEvent.video && (
+                <div>
+                  <video src={currentEvent.video} controls className="max-w-full h-auto" />
+                </div>
+              )}
               <div className="flex justify-end gap-2">
                 {isEditing && (
                   <button

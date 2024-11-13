@@ -28,7 +28,7 @@ The Calendar App aims to provide users with a simple and intuitive interface to 
 
 ## Technologies Used
 
-- **Frontend**: React, Tailwind CSS (optional), `react-big-calendar`, Moment.js
+- **Frontend**: React, CSS, `react-big-calendar`, Moment.js
 - **Backend**: Node.js, Express
 - **Database**: MongoDB (using Mongoose for ORM)
 - **Notifications**: Browser Notifications API
@@ -47,7 +47,7 @@ Ensure you have the following installed:
 ### Cloning the Repository
 
 ```bash
-git clone https://github.com/your-username/calendar-app.git
+git clone https://github.com/upydv/calendar-app.git
 cd calendar-app
 ```
 
@@ -130,19 +130,22 @@ The frontend should be available at [http://localhost:3000](http://localhost:300
 
 1. **Main Calendar View**
 
-   ![Main Calendar View](./screenshots/calendar-view.png)
+   ![Main Calendar View](./screenshots/app-view.png)
 
 2. **Event Creation Modal**
 
    ![Event Creation Modal](./screenshots/create-event.png)
 
-3. **Event Search**
+3. **Event Created**
+   ![Event Created](./screenshots/event-created.png)
+
+4. **Event Search**
 
    ![Event Search](./screenshots/event-search.png)
 
-4. **Notification Popup**
+5. **Notification Popup**
 
-   ![Notification Popup](./screenshots/notification-popup.png)
+   ![Notification Popup](./screenshots/event-notification.png)
 
 ## License
 
